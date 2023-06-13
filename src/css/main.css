@@ -1,3 +1,12 @@
+ul,
+li,
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+  padding: 0;
+}
 .search-form {
   margin-left: auto;
   margin-right: auto;
@@ -22,6 +31,7 @@
   border-color: aquamarine;
   height: 30px;
   width: 250px;
+  font-size: 18px;
 }
 .form-input::placeholder {
   font-size: 18px;
@@ -30,4 +40,59 @@
 .form-input:hover,
 .form-input:focus {
   background-color: whitesmoke;
+}
+
+.photo-card {
+  display: block;
+
+  width: 350px;
+}
+.info {
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+  /* gap: 15px; */
+  /* width: 250px; */
+  /* margin-left: auto;
+  margin-right: auto; */
+  border: 1px solid black;
+  border-top: 0;
+}
+.info-item {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  row-gap: 35px;
+  padding-top: 35px;
+  padding-bottom: 50px;
+}
+.load-more {
+  display: block;
+  cursor: pointer;
+  font-size: 15px;
+  border: 1px solid aquamarine;
+  background-color: aqua;
+  border-radius: 5px;
+  width: 150px;
+
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.load-more:hover,
+.load-more:focus {
+  background-color: greenyellow;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Adjust this as needed to center the button vertically */
+}
+
+.load-more.visible{
+  display: none;
 }
