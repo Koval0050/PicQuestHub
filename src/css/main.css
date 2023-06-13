@@ -1,0 +1,33 @@
+.search-form {
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  /* border: 1px solid red; */
+}
+.btn {
+  cursor: pointer;
+  font-size: 15px;
+  border: 1px solid aquamarine;
+  background-color: aqua;
+  border-radius: 5px;
+  width: 100px;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn:hover,
+.btn:focus {
+  background-color: greenyellow;
+}
+.form-input {
+  padding-left: 15px;
+  border-color: aquamarine;
+  height: 30px;
+  width: 250px;
+}
+.form-input::placeholder {
+  font-size: 18px;
+  color: darkcyan;
+}
+.form-input:hover,
+.form-input:focus {
+  background-color: whitesmoke;
+}
