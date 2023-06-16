@@ -1,5 +1,5 @@
 import Notiflix from 'notiflix';
-import ImgApiService from './fetch_data.js';
+import PixabayApi from './fetch_data.js';
 import LoadMoreBtn from './load_more.js';
 import { createGallery } from './create_gallery.js';
 
@@ -9,11 +9,14 @@ const refs = {
   gallery: document.querySelector('.gallery'),
 };
 
-const imgApiService = new ImgApiService();
+const pixabayApi = new PixabayApi();
 const loadMoreBtn = new LoadMoreBtn({
   selector: '.load-more',
   isHidden: 'true',
 });
+
+let isFirstSearch = true;
+let isLastPage = false;
 
 refs.form.addEventListener('submit', submitForm);
 loadMoreBtn.button.addEventListener('click', loadMoreImages);
@@ -21,7 +24,9 @@ loadMoreBtn.button.addEventListener('click', loadMoreImages);
 function submitForm(e) {
   e.preventDefault();
   clearGallery();
-  imgApiService.resetPage();
+  pixabayApi.resetPage();
+  isFirstSearch = true;
+  isLastPage = false;
   const searchValue = refs.input.value.trim();
   if (searchValue === '') {
     Notiflix.Notify.warning('Sorry, field cannot be empty.');
@@ -29,7 +34,7 @@ function submitForm(e) {
 
     return;
   }
-  imgApiService.searchValue = searchValue;
+  pixabayApi.query = searchValue;
   fetchAndGenerateImages();
   loadMoreBtn.show();
   loadMoreBtn.disable();
@@ -37,7 +42,7 @@ function submitForm(e) {
 
 async function fetchAndGenerateImages() {
   try {
-    const res = await imgApiService.getData();
+    const res = await pixabayApi.fetchPhotosByQuery();
     const { hits, totalHits } = res.data;
     if (totalHits === 0) {
       Notiflix.Notify.failure(
@@ -46,14 +51,16 @@ async function fetchAndGenerateImages() {
       loadMoreBtn.hide();
       return;
     }
-    Notiflix.Notify.success(`Total result: ${totalHits}`);
-    const page = imgApiService.page;
+    if (isFirstSearch) {
+      // Check if it's the first search
+      Notiflix.Notify.success(`Total result: ${totalHits}`);
+      isFirstSearch = false; // Set the flag to false after displaying the message
+    }
+    const page = pixabayApi.page - 1;
     const maxPage = Math.ceil(totalHits / 40);
     if (page >= maxPage) {
+      isLastPage = true;
       loadMoreBtn.hide();
-      Notiflix.Notify.info(
-        "We're sorry, but you've reached the end of search results."
-      );
     } else {
       loadMoreBtn.enable();
     }
@@ -67,53 +74,14 @@ async function fetchAndGenerateImages() {
 
 async function loadMoreImages() {
   loadMoreBtn.disable();
-  fetchAndGenerateImages();
+  await fetchAndGenerateImages();
+  if (isLastPage) {
+    Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
 }
 
 function clearGallery() {
   refs.gallery.innerHTML = '';
 }
-// async function fetchArcticles() {
-//   try {
-//     loadMoreBtn.button.disable();
-
-//     const hits = await generateImgMarkup();
-//     console.log(hits);
-//     // if (hits === undefined) throw new Error();
-
-//     const imgList = createGallery(hits);
-//     refs.gallery.insertAdjacentHTML('beforeend', imgList.join(''));
-//   } catch (err) {
-//     // clearGallery();
-//     // Notiflix.Notify.failure('No data');
-//   }
-// }
-// async function generateImgMarkup() {
-//   try {
-//     const res = await imgApiService.getData();
-//     const { hits, totalHits } = res.data;
-//     const nextPage = imgApiService.page;
-
-//     const maxPage = Math.ceil(totalHits / 40);
-//     if (nextPage > maxPage) {
-//       loadMoreBtn.hide();
-//       Notiflix.Notify.info(
-//         "We're sorry, but you've reached the end of search results."
-//       );
-//     }
-//     if (totalHits === 0) {
-//       throw new Error();
-//     }
-
-//     loadMoreBtn.enable();
-//     console.log(hits);
-//     return hits;
-//   } catch (error) {
-//     Notiflix.Notify.failure(
-//       'Sorry, there are no images matching your search query. Please try again.'
-//     );
-//   }
-// }
-// function clearGallery() {
-//   refs.gallery.innerHTML = '';
-// }
